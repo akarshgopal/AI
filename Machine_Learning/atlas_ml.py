@@ -54,9 +54,9 @@ def model_accuracy(H,Y):
     return accuracy
 
 def RMSE(H,Y):
-	n = np.shape(H)[1]
+	n = H.shape[1]
 	accuracy = 1- 1/n*(np.sqrt(np.dot((H-Y),(H-Y).T)))
-	return accuracy
+	return accuracy.item()
 """
 -----------------------------Activations ------------------------------
 """
@@ -130,7 +130,7 @@ class CE_loss:
 class MSE:
     def get_loss(H,Y):
         L = 1/(2*H.shape[1])*(np.dot((H-Y),(H-Y).T))
-        return L
+        return L.item()
     
     def diff(H,Y):
         dZ = H-Y
@@ -177,7 +177,7 @@ def train(model, X, Y, X_test, Y_test, metric, n_epochs=100, batch_size=4, lr=0.
         plt.plot(e,tr_acc, 'bo')
         plt.plot(e,acc,'ro')
         clear_output()
-        #print(f"epoch:{e+1}/{n_epochs} | Loss:{loss:.4f} | Train Accuracy: {tr_acc:.4f} | Test_Accuracy:{acc:.4f}")
+        print(f"epoch:{e+1}/{n_epochs} | Loss:{loss:.4f} | Train Accuracy: {tr_acc:.4f} | Test_Accuracy:{acc:.4f}")
     plt.show()
 
 """
@@ -213,3 +213,43 @@ class layer:
         self.V_dB = (beta * self.V_dB + (1. - beta) * self.dB)
         self.W = self.W - lr*self.V_dW
         self.B = self.B - lr*self.V_dB
+
+"""
+---------------------------Regression
+"""
+class Linear:
+    def __init__(self, X_size, Y_size, lossfn):
+        self.regressor = layer(X_size, Y_size, no_op)
+        self.lossfn = lossfn
+        
+    def f_pass(self, X):
+        self.H = self.regressor.forward(X)
+        return self.H
+    
+    def back_prop(self,X,Y, batch_size):
+        m = batch_size
+        self.loss = self.lossfn.get_loss(self.H,Y)
+        dZ = self.lossfn.diff(self.H,Y)
+        self.regressor.out_grad(dZ, X, m)
+        
+    def optim(self, lr, beta=0):
+        self.regressor.step(lr,beta)
+
+
+class Logistic:
+    def __init__(self, X_size, Y_size, lossfn):
+        self.regressor = layer(X_size, Y_size, softmax)
+        self.lossfn = lossfn
+        
+    def f_pass(self, X):
+        self.H = self.regressor.forward(X)
+        return self.H
+    
+    def back_prop(self, X, Y, batch_size):
+        m = batch_size
+        self.loss = self.lossfn.get_loss(self.H,Y)
+        dZ = self.lossfn.diff(self.H,Y)
+        self.regressor.out_grad(dZ, X, m)
+    
+    def optim(self, lr, beta=0):
+        self.regressor.step(lr,beta)
