@@ -1,3 +1,22 @@
-Machine Learning Practice Implementations
+#Machine Learning Practice Implementations
 
-"If I can't create it I don't understand it" - Richard Feynman
+##Regression
+1. Linear Regression
+2. Polynomial Regression
+3. Logistic Regression (Classification)
+
+##Neural Networks
+
+##Kernel Methods
+
+##Sparse Kernel Machines
+
+##Graphical Models
+
+##Mixture Models
+
+##Approximate Inference
+
+##Sampling Methods
+
+

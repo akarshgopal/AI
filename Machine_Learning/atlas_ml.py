@@ -6,6 +6,7 @@ from IPython.display import clear_output, display, Math, Latex
  -----------------------------Utils-----------------------------
 """
 def one_hot(Y,n_class):
+    # Returns an (n_class,len(Y)) numpy array as the one hot representation of Y
     length = np.shape(Y)[1]
     O = np.zeros((n_class,length))
     for i in range(length):
@@ -14,6 +15,7 @@ def one_hot(Y,n_class):
     return O
 
 def inv_one_hot(O):
+    # Returns an (1,len(Y)) numpy array as the inverse one hot representation of Y
     n_class = np.shape(O)[0]
     length = np.shape(O)[1]
     Y = np.zeros((1,length))
@@ -23,12 +25,16 @@ def inv_one_hot(O):
     return Y
 
 def normalize(X):
+    # Returns (mean, std) normalized version of X
     mean = np.mean(X)
     std =  np.std(X)
     N_X = (X-mean)/(std)
     return N_X
 
 def init_matrix(n1,n2,activation):
+    # Initializes an (n2,n1) numpy array with a randomization optimized for 
+    #particular activations
+    
     if activation in [sigmoid,softmax]:
         M = np.random.randn(n2,n1)*np.sqrt(2./n1)
     elif activation in [relu,leaky_relu] :
@@ -142,20 +148,21 @@ Passes through dataset for one iteration and performs step
 updates on the model.
 """
 
-def SGD(batch_size,X,Y,model,lr,beta):
+def SGD(batch_size,X,Y,model,lr,beta,reg_lambda=0):
     m = np.shape(X)[1]
     for i in range(0,m,batch_size):
         X_batch = X[:,i:i+batch_size]
         Y_batch = Y[:,i:i+batch_size]
         model.f_pass(X_batch)
-        model.back_prop(X_batch,Y_batch,batch_size)
+        model.back_prop(X_batch, Y_batch, batch_size, reg_lambda)
         model.optim(lr,beta)
     return model.loss
 
 """
 ------------------------------Trainer----------------------------
 """
-def train(model, X, Y, X_test, Y_test, metric, n_epochs=100, batch_size=4, lr=0.01, lr_decay=1, beta=0):
+def train(model, X, Y, X_test, Y_test, metric, n_epochs=100, \
+    batch_size=4, lr=0.01, lr_decay=1, beta=0, reg_lambda=0):
     data_size = X.shape[1]
     for e in range(n_epochs):
         #shuffle dataset
@@ -164,7 +171,7 @@ def train(model, X, Y, X_test, Y_test, metric, n_epochs=100, batch_size=4, lr=0.
         X, Y = X[:,shuffle_index], Y[:,shuffle_index]
 
         #SGD with momentum
-        loss = SGD(batch_size,X,Y,model,lr,beta)
+        loss = SGD(batch_size,X,Y,model,lr,beta, reg_lambda)
 
         lr = lr*lr_decay
 
@@ -178,6 +185,10 @@ def train(model, X, Y, X_test, Y_test, metric, n_epochs=100, batch_size=4, lr=0.
         plt.plot(e,acc,'ro')
         clear_output()
         print(f"epoch:{e+1}/{n_epochs} | Loss:{loss:.4f} | Train Accuracy: {tr_acc:.4f} | Test_Accuracy:{acc:.4f}")
+        
+    #plt.legend()
+    plt.xlabel('Epoch')
+    plt.ylabel('Metric')
     plt.show()
 
 """
@@ -190,22 +201,24 @@ class layer:
         self.activation = activation
         self.V_dW = np.zeros(self.W.shape)
         self.V_dB = np.zeros(self.B.shape)
+        self.dW = np.zeros(self.W.shape)
+        self.dB = np.zeros(self.B.shape)
         
     def forward(self, A0):
         self.Z = np.dot(self.W, A0) + self.B
         self.A = self.activation.activate(self.Z)
         return self.A
     
-    def grad(self, dZ, W, A0, m):
+    def grad(self, dZ, W, A0, m, reg_lambda=0):
         dA = np.dot(W.T, dZ)
         dAdZ = self.activation.diff(self.activation, self.Z)
         self.dZ = np.multiply(dA, dAdZ)
-        self.dW = (1./m)*np.dot(self.dZ, A0.T)
+        self.dW = (1./m)*(np.dot(self.dZ, A0.T) + reg_lambda*self.W)
         self.dB = (1./m)*(np.sum(self.dZ, axis=1, keepdims=True))
     
-    def out_grad(self, dZ, A0, m):
+    def out_grad(self, dZ, A0, m, reg_lambda=0):
         self.dZ = dZ
-        self.dW = (1./m)*np.dot(self.dZ, A0.T)
+        self.dW = (1./m)*(np.dot(self.dZ, A0.T) + reg_lambda*self.W)
         self.dB = (1./m)*(np.sum(self.dZ, axis=1, keepdims=True))
         
     def step(self, lr, beta):
@@ -226,11 +239,11 @@ class Linear:
         self.H = self.regressor.forward(X)
         return self.H
     
-    def back_prop(self,X,Y, batch_size):
+    def back_prop(self,X,Y, batch_size, reg_lambda):
         m = batch_size
         self.loss = self.lossfn.get_loss(self.H,Y)
         dZ = self.lossfn.diff(self.H,Y)
-        self.regressor.out_grad(dZ, X, m)
+        self.regressor.out_grad(dZ, X, m, reg_lambda)
         
     def optim(self, lr, beta=0):
         self.regressor.step(lr,beta)
@@ -245,11 +258,11 @@ class Logistic:
         self.H = self.regressor.forward(X)
         return self.H
     
-    def back_prop(self, X, Y, batch_size):
+    def back_prop(self, X, Y, batch_size, reg_lambda):
         m = batch_size
         self.loss = self.lossfn.get_loss(self.H,Y)
         dZ = self.lossfn.diff(self.H,Y)
-        self.regressor.out_grad(dZ, X, m)
+        self.regressor.out_grad(dZ, X, m, reg_lambda)
     
     def optim(self, lr, beta=0):
         self.regressor.step(lr,beta)
