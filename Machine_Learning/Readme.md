@@ -1,22 +1,22 @@
-#Machine Learning Practice Implementations
+# Machine Learning Practice Implementations
 
-##Regression
+## Regression
 1. Linear Regression
 2. Polynomial Regression
 3. Logistic Regression (Classification)
 
-##Neural Networks
+## Neural Networks
 
-##Kernel Methods
+## Kernel Methods
 
-##Sparse Kernel Machines
+## Sparse Kernel Machines
 
-##Graphical Models
+## Graphical Models
 
-##Mixture Models
+## Mixture Models
 
-##Approximate Inference
+## Approximate Inference
 
-##Sampling Methods
+## Sampling Methods
 
 
