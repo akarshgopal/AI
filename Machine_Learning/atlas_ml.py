@@ -5,6 +5,19 @@ from IPython.display import clear_output, display, Math, Latex
 """
  -----------------------------Utils-----------------------------
 """
+
+def polynom_features(X,d):
+    # (n,m) -> (n*o,m)
+    stack_stack = []
+    for i in range(X.shape[0]):
+        Xi = X[i,:]
+        stack = []
+        for j in range(1,d+1):
+            stack.append(Xi**j)
+        stack_stack.append(np.vstack(stack))
+    PX = np.vstack(stack_stack)
+    return PX
+
 def one_hot(Y,n_class):
     # Returns an (n_class,len(Y)) numpy array as the one hot representation of Y
     length = np.shape(Y)[1]

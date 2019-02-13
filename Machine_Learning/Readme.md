@@ -1,11 +1,12 @@
 # Machine Learning Practice Implementations
 
 ### 1.  Regression
-	1. [Linear Regression](/Linear_Regression.ipynb)
-	2. [Polynomial Regression](/Polynomial_Regression.ipynb)
-	3. [Logistic Regression](/Logistic_Regression.ipynb) (Classification)
+	1. Linear Regression
+	2. Polynomial Regression
+	3. Logistic Regression (Classification)
 
 ### 2.  Neural Networks
+	Go to Deep Learning
 
 ### 3.  Kernel Methods
 
