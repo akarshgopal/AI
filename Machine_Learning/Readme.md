@@ -21,3 +21,7 @@
 ### 8.  Sampling Methods
 
 
+### Kaggle 
+	1. Titanic - Ensemble methods for classification
+		Logistic Regression
+		K

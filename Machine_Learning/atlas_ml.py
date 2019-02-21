@@ -279,3 +279,55 @@ class Logistic:
     
     def optim(self, lr, beta=0):
         self.regressor.step(lr,beta)
+
+
+
+def confusion_mat(H,Y):
+    TP = 0
+    FP = 0
+    TN = 0
+    FN = 0
+    
+    return None
+
+def precision(H,Y):
+    return None
+
+def recall(H,Y):
+    return None
+
+def F1(H,Y):
+    return None
+
+
+#
+#--------------------------------------------------------------------------  K Nearest Neighbours classifier ----------------------------------------------------
+
+def KNN_classifier(X,Y,X_test,K):
+    # X.shape = (n,m)  n = number of features , m = number of training examples
+    # Y.shape = (1,m)
+    # x.shape = (n,t) t = number of test examples
+    # Euclidian dist only atm
+    # Works properly only for k < m//2
+    
+    t = X_test.shape[1]
+    y = []
+    
+    for i in range(t):
+        x_i = np.expand_dims(X_test[:,i],axis=1)
+
+        deltaV = x_i - X
+
+        #Euclidian dist
+        dist = np.sum(deltaV*deltaV,axis=0)
+        Knn_indices = np.argpartition(dist,K)[0:K]
+        Knn_labels = [Y[0,j].tolist() for j in Knn_indices]
+        counts = np.bincount(Knn_labels)
+        #find majority label
+        y_i = np.argmax(counts)
+        y.append(y_i)
+    
+    y = np.array([y])
+    
+    return y
+
