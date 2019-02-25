@@ -6,20 +6,12 @@
 	3. Logistic Regression (Classification)
 
 ### 2.  Neural Networks
-	Go to Deep Learning
 
-### 3.  Kernel Methods
+### 3.  K Nearest Neighbours Classifier
 
-### 4.  Sparse Kernel Machines
+### 4.  Genetic Optimizer
 
-### 5.  Graphical Models
-
-### 6.  Mixture Models
-
-### 7.  Approximate Inference
-
-### 8.  Sampling Methods
-
+### 5. Support Vector Machines
 
 ### Kaggle 
 	1. Titanic - Ensemble methods for classification

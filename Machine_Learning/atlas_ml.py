@@ -197,7 +197,8 @@ def train(model, X, Y, X_test, Y_test, metric, n_epochs=100, \
         plt.plot(e,tr_acc, 'bo')
         plt.plot(e,acc,'ro')
         clear_output()
-        print(f"epoch:{e+1}/{n_epochs} | Loss:{loss:.4f} | Train Accuracy: {tr_acc:.4f} | Test_Accuracy:{acc:.4f}")
+        print(f"epoch:{e+1}/{n_epochs} | Loss:{loss:.4f} | \
+            Train Accuracy: {tr_acc:.4f} | Test_Accuracy:{acc:.4f}")
         
     #plt.legend()
     plt.xlabel('Epoch')
@@ -331,3 +332,66 @@ def KNN_classifier(X,Y,X_test,K):
     
     return y
 
+
+
+#---------------------------------------------------------------------------- Genetic Optimizer -----------------------------------------------------------------
+class genetic_optimizer:
+    
+    def __init__(self, population_size, num_genes, fitness_fn, \
+        pass_thres=0.25, mutation_prob=0.2, mutation_ampl=1):
+        self.population_size = population_size
+        self.num_genes = num_genes
+        self.fitness_fn = fitness_fn
+        self.population = np.random.uniform(low = -4.0, high = 4.0,\
+         size = (self.num_genes, self.population_size))
+        self.mutation_prob = mutation_prob
+        self.mutation_ampl = mutation_ampl
+        self.fitness = self.fitness_fn(self.population)
+        self.pass_thres = pass_thres
+                
+    def crossover(self, X1, X2):
+        rand_list =  np.random.uniform(size = self.num_genes)< 0.5
+        X3 = X1*rand_list + (1-rand_list)*X2
+        return X3
+
+    def mutate(self, X):
+        rand_list =  np.random.uniform(size = self.num_genes)< self.mutation_prob
+        rand_list2 =  np.random.uniform(-1, 1, size = self.num_genes)
+        X2 = X + self.mutation_ampl * rand_list2 * rand_list
+        return X2
+
+    def next_generation(self):
+        N = int(self.population_size*self.pass_thres)
+        k = N
+        while k < self.population_size:
+            if (k < 2*N):
+                self.population[:,k] = self.crossover(self.population[:,k - N],\
+                 self.population[:,k - N + 1])
+            
+            if (k >= 2*N) and (k < 3*N):
+                m = int(4 * N * np.random.uniform())
+                self.population[:,k] = self.crossover(self.population[:,k - 2 *N],\
+                 self.population[:,m])
+            
+            if (k >= 3*N):
+                m1 = int( 4*N * np.random.uniform())
+                m2 = int( 4*N * np.random.uniform())
+                self.population[:,k] = self.crossover(self.population[:,m1],\
+                 self.population[:,m2])
+            
+            self.population[:,k] = self.mutate(self.population[:,k])
+            k = k + 1
+
+    def optimize(self, num_generations = 10000):
+        self.fitness = np.ndarray([self.population_size,1])
+        for generation in range(num_generations):
+            self.fitness = self.fitness_fn(self.population)
+            qq = np.argsort(self.fitness)
+            qq = qq[::-1]          
+            self.population = self.population[:,qq]
+            self.fitness = self.fitness[qq]  
+            if (generation % (num_generations/10) == 0): 
+                print(self.fitness[0]) 
+                print(self.population[0])
+            self.next_generation()
+        return(self.fitness[0], self.population[:,0])
