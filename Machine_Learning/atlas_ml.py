@@ -187,9 +187,22 @@ class genetic_optimizer:
         self.pass_thres = pass_thres
                 
     def crossover(self, X1, X2):
-        rand_list =  np.random.uniform(size = self.num_genes)< 0.5
-        X3 = X1*rand_list + (1-rand_list)*X2
+        # half genes from X1, other half from X2
+        # if number of genes n is odd, n-1 split between X1 and X2, 
+        #     nth gene selected on random from either X1 or X2 
+        N = X1.shape[0]
+        X3 = np.ndarray(X1.shape)
+        ind1 = np.random.choice(range(N), N//2, replace=False)
+        for i in range(N):
+            if i in ind1:
+                X3[i] = X2[i]
+            else:
+                X3[i] = X1[i]    
         return X3
+
+        #rand_list =  np.random.uniform(size = self.num_genes)< 0.5
+        #X3 = X1*rand_list + (1-rand_list)*X2
+        #return X3
 
     def mutate(self, X):
         rand_list =  np.random.uniform(size = self.num_genes)< self.mutation_prob
