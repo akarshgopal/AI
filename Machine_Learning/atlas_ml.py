@@ -48,11 +48,11 @@ def init_matrix(n1,n2,activation):
     # Initializes an (n2,n1) numpy array with a randomization optimized for 
     #particular activations
     
-    if activation in [sigmoid,softmax]:
+    if isinstance(activation,(sigmoid,softmax)):
         M = np.random.randn(n2,n1)*np.sqrt(2./n1)
-    elif activation in [relu,leaky_relu] :
+    elif isinstance(activation,(relu,leaky_relu)) :
         M = np.random.randn(n2,n1)*np.sqrt(1./n1)
-    elif activation == tanh:
+    elif isinstance(activation, tanh):
         M = np.random.randn(n2,n1)*np.sqrt(1./(n1+n2))
     else:
     	M = np.random.randn(n2,n1) 
@@ -80,7 +80,7 @@ def RMSE(H,Y):
 -----------------------------Activations ------------------------------
 """
 class sigmoid:
-    def activate(Z):
+    def activate(self,Z):
         A = 1/(1+np.exp(-Z))
         return A
     
@@ -89,7 +89,7 @@ class sigmoid:
         return dsig
  
 class relu:
-    def activate(Z):
+    def activate(self,Z):
         A = Z*(Z>0)
         return A
     
@@ -99,17 +99,17 @@ class relu:
     
 class softmax:
     """Compute softmax values for each sets of scores in x."""
-    def activate(Z):
+    def activate(self,Z):
         e_Z = np.exp(Z- np.max(Z,axis=0))
         return e_Z / e_Z.sum(axis=0)
     
-    def diff(Z):
+    def diff(self,Z):
         return Z
 
     
 # wrong implementation of leaky
 class leaky_relu:
-    def activate(Z):
+    def activate(self,Z):
         A = Z if (Z.all()>0.001*Z.all()) else 0.001*Z
         return A
     
@@ -118,7 +118,7 @@ class leaky_relu:
         return d_lrel
     
 class tanh:
-    def activate(Z):
+    def activate(self,Z):
         A = np.tanh(Z)
         return A
 
@@ -128,7 +128,7 @@ class tanh:
 
 #dummy activation
 class no_op:
-	def activate(Z):
+	def activate(self,Z):
 		return Z
 
 	def diff(self,Z):
@@ -138,24 +138,26 @@ class no_op:
 ----------------------------------Loss Functions ------------------
 """    
 class CE_loss:
-    def get_loss(H,Y):
+    def get_loss(self,H,Y):
         L = -np.mean(np.multiply(Y,np.log(H)))
         return L
     
-    def diff(H,Y):
-        dZ = H - Y 
+    def diff(self,H,Y):
+
+        n = Y.shape[0]
+        dZ = 1/n*(H-Y) 
         return dZ
     
 class MSE:
-    def get_loss(H,Y):
+    def get_loss(self,H,Y):
         L = 1/(2*H.shape[1])*(np.dot((H-Y),(H-Y).T))
         return L.item()
     
-    def diff(H,Y):
-        dZ = H-Y
+    def diff(self,H,Y):
+        dZ = H - Y 
         return dZ
 
-"""
+"""        
 --------------------------------Optimizers--------------------------
 Passes through dataset for one iteration and performs step 
 updates on the model.
@@ -287,7 +289,7 @@ class layer:
     def __init__(self, n_prev, n_next, activation):
         self.W = init_matrix(n_prev, n_next, activation)
         self.B = init_matrix(1, n_next, activation)
-        self.activation = activation
+        self.activation = activation()
         self.V_dW = np.zeros(self.W.shape)
         self.V_dB = np.zeros(self.B.shape)
         self.dW = np.zeros(self.W.shape)
@@ -300,7 +302,7 @@ class layer:
     
     def grad(self, dZ, W, A0, m, reg_lambda=0):
         dA = np.dot(W.T, dZ)
-        dAdZ = self.activation.diff(self.activation, self.Z)
+        dAdZ = self.activation.diff(self.Z)
         self.dZ = np.multiply(dA, dAdZ)
         self.dW = (1./m)*(np.dot(self.dZ, A0.T) + reg_lambda*self.W)
         self.dB = (1./m)*(np.sum(self.dZ, axis=1, keepdims=True))
@@ -322,7 +324,7 @@ class layer:
 class Linear:
     def __init__(self, X_size, Y_size, lossfn):
         self.regressor = layer(X_size, Y_size, no_op)
-        self.lossfn = lossfn
+        self.lossfn = lossfn()
         
     def f_pass(self, X):
         self.H = self.regressor.forward(X)
@@ -341,7 +343,7 @@ class Linear:
 class Logistic:
     def __init__(self, X_size, Y_size, lossfn):
         self.regressor = layer(X_size, Y_size, softmax)
-        self.lossfn = lossfn
+        self.lossfn = lossfn()
         
     def f_pass(self, X):
         self.H = self.regressor.forward(X)
@@ -356,24 +358,6 @@ class Logistic:
     def optim(self, lr, beta=0):
         self.regressor.step(lr,beta)
 
-
-
-def confusion_mat(H,Y):
-    TP = 0
-    FP = 0
-    TN = 0
-    FN = 0
-    
-    return None
-
-def precision(H,Y):
-    return None
-
-def recall(H,Y):
-    return None
-
-def F1(H,Y):
-    return None
 
 
 #
