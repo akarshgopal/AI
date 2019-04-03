@@ -39,8 +39,8 @@ def inv_one_hot(O):
 
 def normalize(X):
     # Returns (mean, std) normalized version of X
-    mean = np.mean(X)
-    std =  np.std(X)
+    mean = np.mean(X,axis=-1, keepdims=True)
+    std =  np.std(X,axis=-1, keepdims=True)
     N_X = (X-mean)/(std)
     return N_X
 
