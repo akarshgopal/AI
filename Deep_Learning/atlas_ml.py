@@ -62,6 +62,36 @@ def zero_padding(img_matrix, padding):
     pad_width = [(0,0),(0,0),(padding[0],padding[0]),(padding[1],padding[1])]
     padded_matrix = np.pad(img_matrix, pad_width=pad_width, mode='constant',)
     return padded_matrix
+
+
+#https://stackoverflow.com/questions/30109068/implement-matlabs-im2col-sliding-in-python
+def im2col(imgs, kernel_size, stride):
+    # Parameters
+    F = kernel_size
+    batch_size, D,H,W = imgs.shape
+    col_extent = (W - F[1]) + 1
+    row_extent = (H - F[0]) + 1
+
+    # Get batch block indices
+    batch_idx = np.arange(batch_size)[:, None, None] * D * H * W
+    # Get Starting block indices
+    start_idx = np.arange(F[0])[None, :,None]*W + np.arange(F[1])
+    # Generate Depth indices
+    didx=H*W*np.arange(D)
+    start_idx=(didx[None, :, None]+start_idx.ravel()).reshape((-1,F[0],F[1]))
+
+    # Get offsetted indices across the height and width of input array
+    offset_idx = np.arange(row_extent)[None, :, None]*W + np.arange(col_extent)
+    
+    # Get all actual indices & index into input array for final output
+    act_idx = (batch_idx + 
+        start_idx.ravel()[None, :, None] + 
+        offset_idx[:,::stride[0],::stride[1]].ravel())
+
+    col_matrix = np.take (imgs, act_idx)
+    return col_matrix, act_idx
+
+
 """
 -----------------------------Initialization----------------------------------------
 """
