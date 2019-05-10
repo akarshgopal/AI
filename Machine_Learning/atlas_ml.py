@@ -39,8 +39,8 @@ def inv_one_hot(O):
 
 def normalize(X):
     # Returns (mean, std) normalized version of X
-    mean = np.mean(X,axis=-1, keepdims=True)
-    std =  np.std(X,axis=-1, keepdims=True)
+    mean = np.mean(X,axis=0, keepdims=True)
+    std =  np.std(X,axis=0, keepdims=True)
     N_X = (X-mean)/(std)
     return N_X
 
@@ -287,37 +287,37 @@ def train(model, X, Y, X_test, Y_test, metric, n_epochs=100, \
 """
 class layer:
     def __init__(self, n_prev, n_next, activation):
-        self.W = init_matrix(n_prev, n_next, activation)
-        self.B = init_matrix(1, n_next, activation)
-        self.activation = activation()
+        self.W = init_theta(n_prev, n_next, activation)
+        self.B = init_theta(1, n_next, activation)
+        self.activation = activation
         self.V_dW = np.zeros(self.W.shape)
         self.V_dB = np.zeros(self.B.shape)
-        self.dW = np.zeros(self.W.shape)
-        self.dB = np.zeros(self.B.shape)
         
     def forward(self, A0):
         self.Z = np.dot(self.W, A0) + self.B
         self.A = self.activation.activate(self.Z)
         return self.A
     
-    def grad(self, dZ, W, A0, m, reg_lambda=0):
-        dA = np.dot(W.T, dZ)
-        dAdZ = self.activation.diff(self.Z)
+    def grad(self, dA, A0, m, reg_lambda=0):
+        dAdZ = self.activation.diff(self.activation, self.Z)
         self.dZ = np.multiply(dA, dAdZ)
         self.dW = (1./m)*(np.dot(self.dZ, A0.T) + reg_lambda*self.W)
         self.dB = (1./m)*(np.sum(self.dZ, axis=1, keepdims=True))
+        dA_prev = np.dot(self.W.T, self.dZ) 
+        return dA_prev
     
     def out_grad(self, dZ, A0, m, reg_lambda=0):
         self.dZ = dZ
         self.dW = (1./m)*(np.dot(self.dZ, A0.T) + reg_lambda*self.W)
         self.dB = (1./m)*(np.sum(self.dZ, axis=1, keepdims=True))
+        dA_prev = (1./m)*np.dot(self.W.T, self.dZ) 
+        return dA_prev
         
     def step(self, lr, beta):
         self.V_dW = (beta * self.V_dW + (1. - beta) * self.dW)
         self.V_dB = (beta * self.V_dB + (1. - beta) * self.dB)
         self.W = self.W - lr*self.V_dW
         self.B = self.B - lr*self.V_dB
-
 """
 ---------------------------Regression
 """
