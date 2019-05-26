@@ -308,8 +308,8 @@ def RMSE(H,Y):
     Raises:
         No error checks included.
     """
-    accuracy = 1/H.shape[0]*(np.sqrt(np.einsum('Mn,Mn->',(H-Y),(H-Y))))
-    return accuracy
+    accuracy = 1- 1/H.shape[0]*(np.sqrt(np.einsum('Mn,Mn->',(H-Y),(H-Y))))
+    return accuracy.item()
 
 
 #-----------------------------Activations ------------------------------
