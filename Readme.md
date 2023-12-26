@@ -6,16 +6,16 @@ DL 0 -> SOTA 5 Day
 ## Day 1: Back to Basics
 Goal for the day: Refresh all ML and NN basics (learned so far)
 - Classic ML refresh (5 hrs)
-	- KNNs
-	- SVMs
-	- Collaborative filtering and K-means
-	- PCA
-	- Decision trees and random forests
+	- [-] KNNs
+	- [ ] SVMs
+	- [ ] Collaborative filtering and K-means
+	- [ ] PCA
+	- [ ] Decision trees and random forests
 - Data handling, data set prep fundamentals (2 hrs)
-	- Train / Val  Split -> Test
-	- Normalisation, cleaning
+	- [-] Train / Val  Split -> Test
+	- [-] Normalisation, cleaning
 - Perf fundamentals (1 hr)
-	- Precision, Recall and confusion matrix
+	- [-] Precision, Recall and confusion matrix
 
 ## Day 2: Neural Net Zoo
 - Basic NN via torch / maybe some mojo or mlx
