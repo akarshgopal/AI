@@ -4,7 +4,6 @@ DL 0 -> SOTA 5 Day
 # Plan
 
 ## Day 1: Back to Basics
-- Basic NN via torch / maybe some mojo or mlx
 Goal for the day: Refresh all ML and NN basics (learned so far)
 - Classic ML refresh (5 hrs)
 	- KNNs
@@ -13,12 +12,13 @@ Goal for the day: Refresh all ML and NN basics (learned so far)
 	- PCA
 	- Decision trees and random forests
 - Data handling, data set prep fundamentals (2 hrs)
-	- Val / Test
+	- Train / Val  Split -> Test
 	- Normalisation, cleaning
 - Perf fundamentals (1 hr)
 	- Precision, Recall and confusion matrix
 
 ## Day 2: Neural Net Zoo
+- Basic NN via torch / maybe some mojo or mlx
 - Implement, train and tune the major types of NNs (up until):
 	- FFN (1 hr)
     - Classify
