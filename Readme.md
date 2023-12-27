@@ -22,7 +22,8 @@ Goal for the day: Refresh all ML and NN basics (learned so far)
 - Implement, train and tune the major types of NNs (up until):
 	- FFN (1 hr)
     - Classify
-    - Regress
+
+## Day 3: More Zoo, then Time to Pay Attention
   - Training concepts (2 hrs)
     - Loss functions
     - Regularisation / Normalisation
@@ -34,10 +35,11 @@ Goal for the day: Refresh all ML and NN basics (learned so far)
 		- GRUs
   - Autoencoders (2 hrs)
 
-
-## Day 3: Time to Pay Attention
 - Implement attention (cross and self), understand what is going on
 - Implement GPT-2 from paper using pytorch basic blocks. 
+
+## Day 4: Dream Machine
+- Goal: Implement the diffusion model pipeline, and train a toy latent diffusion model
 
 
 ## Day 4: Down the abstraction elevator we go
@@ -48,6 +50,3 @@ Goal for the day: Refresh all ML and NN basics (learned so far)
 - Regulatisation
 - Normalisation
 - 
-
-## Day 5: Dream Machine
-- Goal: Implement the diffusion model pipeline, and train a toy latent diffusion model
