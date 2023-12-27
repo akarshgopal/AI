@@ -7,10 +7,10 @@ DL 0 -> SOTA 5 Day
 Goal for the day: Refresh all ML and NN basics (learned so far)
 - Classic ML refresh (5 hrs)
 	- [-] KNNs
-	- [ ] SVMs
+	- [-] SVMs
 	- [ ] Collaborative filtering and K-means
 	- [ ] PCA
-	- [ ] Decision trees and random forests
+	- [-] Decision trees and random forests
 - Data handling, data set prep fundamentals (2 hrs)
 	- [-] Train / Val  Split -> Test
 	- [-] Normalisation, cleaning
@@ -35,12 +35,12 @@ Goal for the day: Refresh all ML and NN basics (learned so far)
   - Autoencoders (2 hrs)
 
 
-## Day 2: Time to Pay Attention
+## Day 3: Time to Pay Attention
 - Implement attention (cross and self), understand what is going on
 - Implement GPT-2 from paper using pytorch basic blocks. 
 
 
-## Day 3: Down the abstraction elevator we go
+## Day 4: Down the abstraction elevator we go
 - Goal: Go top down, and implement as much of the stack ourselves as we call
 - Matrix Math
 - Chain Rule
@@ -49,8 +49,5 @@ Goal for the day: Refresh all ML and NN basics (learned so far)
 - Normalisation
 - 
 
-## Day 4: Dream Machine
+## Day 5: Dream Machine
 - Goal: Implement the diffusion model pipeline, and train a toy latent diffusion model
-
-
-## Day 5: 
